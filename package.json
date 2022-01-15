@@ -4,7 +4,8 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "contracts": "yarn workspace contracts"
+    "contracts": "yarn workspace contracts",
+    "web": "yarn workspace web"
   },
   "workspaces": [
     "packages/*"
@@ -22,6 +23,5 @@
     "@types/node": "^16.9.6",
     "prettier": "^2.2.1"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
