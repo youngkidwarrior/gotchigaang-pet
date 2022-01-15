@@ -8,9 +8,9 @@
     "prettier": "prettier --write contracts/**/*.sol",
     "solhint": "solhint 'contracts/**/*.sol'",
     "chain": "hardhat node",
-    "build": "forge build -c ./packages/contracts/src",
-    "create": "forge create",
-    "deploy-local": "hardhat run scripts/deploy.js --network localhost",
+    "compile": "hardhat compile",
+    "deploy": "hardhat deploy",
+    "deploy-local": "hardhat deploy --network localhost",
     "fork": "hardhat node --fork https://polygon-rpc.com"
   },
   "repository": {
