@@ -33,7 +33,7 @@ contract LazyPetter is PokeMeReady {
     agf = AavegotchiGameFacet(gotchiDiamond);
   }
 
-  function addGotchiOwners(address[] _gotchiOwners) external {
+  function addGotchiOwners(address[] memory _gotchiOwners) external {
     for (uint256 i = 0; i < _gotchiOwners.length; i++) {
       uint32[] memory gotchis = af.tokenIdsOfOwner(gotchiOwners[i]);
       require(gotchis.length > 0, 'Addresses must have at least one gotchi');
@@ -43,7 +43,7 @@ contract LazyPetter is PokeMeReady {
     emit AddGotchiOwners(_gotchiOwners);
   }
 
-  function removeGotchiOwners(address[] _gotchiOwners) external {
+  function removeGotchiOwners(address[] memory _gotchiOwners) external {
     for (uint256 i = 0; i < _gotchiOwners.length; i++) {
       for (uint256 j = 0; j < gotchiOwners.length; j++) {
         if (gotchiOwners[j] == _gotchiOwners[i]) {
@@ -67,8 +67,8 @@ contract LazyPetter is PokeMeReady {
     for (uint256 i = 0; i < gotchiOwners.length; i++) {
       uint32[] memory gotchis = af.tokenIdsOfOwner(gotchiOwners[i]);
       uint256[] memory gotchiIds = new uint256[](gotchis.length);
-      for (uint256 i = 0; i < gotchis.length; i++) {
-        gotchiIds[i] = uint256(gotchis[i]);
+      for (uint256 j = 0; j < gotchis.length; j++) {
+        gotchiIds[j] = uint256(gotchis[j]);
       }
       agf.interact(gotchiIds);
     }
