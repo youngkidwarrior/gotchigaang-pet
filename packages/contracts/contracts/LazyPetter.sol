@@ -4,7 +4,10 @@ pragma solidity 0.8.0;
 import { PokeMeReady } from "./PokeMeReady.sol";
 
 interface AavegotchiFacet {
-  function tokenIdsOfOwner(address _owner) external view returns (uint32[] memory tokenIds_);
+  function tokenIdsOfOwner(address _owner)
+    external
+    view
+    returns (uint32[] memory tokenIds_);
 }
 
 interface AavegotchiGameFacet {
@@ -13,28 +16,33 @@ interface AavegotchiGameFacet {
 
 contract LazyPetter is PokeMeReady {
   uint256 public lastExecuted;
-  address private gotchiOwner;
+  address[] private gotchiOwners;
   AavegotchiFacet private af;
   AavegotchiGameFacet private agf;
 
-  constructor(address payable _pokeMe, address gotchiDiamond, address _gotchiOwner) PokeMeReady(_pokeMe) {
+  constructor(
+    address payable _pokeMe,
+    address gotchiDiamond,
+    address[] _gotchiOwners
+  ) PokeMeReady(_pokeMe) {
     af = AavegotchiFacet(gotchiDiamond);
     agf = AavegotchiGameFacet(gotchiDiamond);
-    gotchiOwner = _gotchiOwner;
+    gotchiOwners = _gotchiOwners;
   }
 
   function petGotchis() external onlyPokeMe {
     require(
       ((block.timestamp - lastExecuted) > 43200),
-      "LazyPetter: pet: 12 hours not elapsed"
+      'LazyPetter: pet: 12 hours not elapsed'
     );
-
-    uint32[] memory gotchis = af.tokenIdsOfOwner(gotchiOwner);
+    for (uint256 i = 0; i < gotchiOwners.length; i++) {
+      uint32[] memory gotchis = af.tokenIdsOfOwner(gotchiOwners[i]);
     uint256[] memory gotchiIds = new uint256[](gotchis.length);
-    for (uint i = 0; i < gotchis.length; i++) {
+      for (uint256 i = 0; i < gotchis.length; i++) {
       gotchiIds[i] = uint256(gotchis[i]);
     }
     agf.interact(gotchiIds);
+    }
 
     lastExecuted = block.timestamp;
   }
