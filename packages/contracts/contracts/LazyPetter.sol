@@ -27,12 +27,10 @@ contract LazyPetter is PokeMeReady {
 
   constructor(
     address payable _pokeMe,
-    address gotchiDiamond,
-    address[] _gotchiOwners
+    address gotchiDiamond
   ) PokeMeReady(_pokeMe) {
     af = AavegotchiFacet(gotchiDiamond);
     agf = AavegotchiGameFacet(gotchiDiamond);
-    gotchiOwners = _gotchiOwners;
   }
 
   function addGotchiOwners(address[] _gotchiOwners) external {
@@ -61,6 +59,10 @@ contract LazyPetter is PokeMeReady {
     require(
       ((block.timestamp - lastExecuted) > 43200),
       'LazyPetter: pet: 12 hours not elapsed'
+    );
+    require (
+      gotchiOwners.length > 0,
+      'LazyPetter: no gotchis to pet'
     );
     for (uint256 i = 0; i < gotchiOwners.length; i++) {
       uint32[] memory gotchis = af.tokenIdsOfOwner(gotchiOwners[i]);
