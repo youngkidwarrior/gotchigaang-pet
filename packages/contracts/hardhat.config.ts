@@ -5,7 +5,7 @@ import 'solidity-coverage';
 import * as dotenv from 'dotenv';
 import '@typechain/hardhat';
 
-dotenv.config({ path: './../../.env' });
+dotenv.config({ path: './../../.env.local' });
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
