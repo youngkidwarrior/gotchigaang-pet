@@ -1,4 +1,3 @@
-import { isDecodedCallTrace } from 'hardhat/internal/hardhat-network/stack-traces/message-trace';
 import { useState, useEffect } from 'react';
 
 const api =
@@ -13,11 +12,7 @@ export const useGaangMembers = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const {
-        data: {
-          moloches
-        },
-      } = await (
+      const {data} = await (
         await fetch(api, {
           method: 'POST',
           headers: {
@@ -26,7 +21,8 @@ export const useGaangMembers = () => {
           },
           body: JSON.stringify({
             query: `{
-            moloches(where:{id:${process.env.DAO_ADDRESS}}) {
+            moloches(where:{id:"${process.env.DAO_ADDRESS}"}) {
+              
               id
               members{
                 memberAddress
@@ -36,7 +32,7 @@ export const useGaangMembers = () => {
           }),
         })
       ).json();
-      const gaangAddresses = moloches[0].members.map(member => member.memberAddress);
+      const gaangAddresses = data.moloches[0].members.map(member => member.memberAddress);
       setGaang(gaangAddresses);
       setLoading(false);
     };

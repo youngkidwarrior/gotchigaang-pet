@@ -142,4 +142,3 @@ const useWeb3Modal = () => {
   return { web3Modal, connect, disconnect, web3Provider, address}
 }
 export default useWeb3Modal;
- 
