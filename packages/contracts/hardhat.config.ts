@@ -2,6 +2,7 @@ import '@nomiclabs/hardhat-waffle';
 import '@nomiclabs/hardhat-ethers';
 import 'hardhat-contract-sizer';
 import 'solidity-coverage';
+import 'hardhat-deploy';
 import * as dotenv from 'dotenv';
 import '@typechain/hardhat';
 
@@ -29,6 +30,9 @@ export default {
     localhost: {
       url: 'http://localhost:8545',
     },
+  },
+  namedAccounts:{
+    deployer: 0
   },
   gasReporter: {
     currency: 'USD',

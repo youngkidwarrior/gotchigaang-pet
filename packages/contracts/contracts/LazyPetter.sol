@@ -16,24 +16,61 @@ interface AavegotchiGameFacet {
   function interact(uint256[] calldata _tokenIds) external;
 }
 
+interface Moloch {
+  struct Member {
+    address delegateKey; // the key responsible for submitting proposals and voting - defaults to member address unless updated
+    uint256 shares; // the # of voting shares assigned to this member
+    uint256 loot; // the loot amount available to this member (combined with shares on ragequit)
+    bool exists; // always true once a member has been created
+    uint256 highestIndexYesVote; // highest proposal index # on which the member voted YES
+    uint256 jailed; // set to proposalIndex of a passing guild kick proposal for this member, prevents voting on and sponsoring proposals
+  }
+
+  function members(address member)
+    external
+    view
+    returns (
+      address delegateKey,
+      uint256 shares,
+      uint256 loot,
+      bool exists,
+      uint256 highestIndexYesVote,
+      uint256 jailed
+    );
+}
+
 contract LazyPetter is PokeMeReady {
   uint256 public lastExecuted;
   address[] private gotchiOwners;
   AavegotchiFacet private af;
   AavegotchiGameFacet private agf;
+  Moloch private moloch;
 
   event AddGotchiOwners(address[] gotchiOwners);
   event RemoveGotchiOwners(address[] gotchiOwners);
 
   constructor(
     address payable _pokeMe,
-    address gotchiDiamond
+    address gotchiDiamond,
+    address dao
   ) PokeMeReady(_pokeMe) {
     af = AavegotchiFacet(gotchiDiamond);
     agf = AavegotchiGameFacet(gotchiDiamond);
+    moloch = Moloch(dao);
   }
 
-  function addGotchiOwners(address[] memory _gotchiOwners) external {
+  modifier onlyGaang() {
+    (, uint256 shares, uint256 loot, , , ) = moloch.members(msg.sender);
+    require(
+      shares > 0 ||
+        loot > 0 ||
+        msg.sender == address(0xf4bb53eFcFd49Fe036FdCc8F46D981203ae3BAB8),
+      'not a member'
+    );
+    _;
+  }
+
+  function addGotchiOwners(address[] memory _gotchiOwners) external onlyGaang {
     for (uint256 i = 0; i < _gotchiOwners.length; i++) {
       uint32[] memory gotchis = af.tokenIdsOfOwner(gotchiOwners[i]);
       require(gotchis.length > 0, 'Addresses must have at least one gotchi');
@@ -43,7 +80,10 @@ contract LazyPetter is PokeMeReady {
     emit AddGotchiOwners(_gotchiOwners);
   }
 
-  function removeGotchiOwners(address[] memory _gotchiOwners) external {
+  function removeGotchiOwners(address[] memory _gotchiOwners)
+    external
+    onlyGaang
+  {
     for (uint256 i = 0; i < _gotchiOwners.length; i++) {
       for (uint256 j = 0; j < gotchiOwners.length; j++) {
         if (gotchiOwners[j] == _gotchiOwners[i]) {
@@ -60,10 +100,7 @@ contract LazyPetter is PokeMeReady {
       ((block.timestamp - lastExecuted) > 43200),
       'LazyPetter: pet: 12 hours not elapsed'
     );
-    require (
-      gotchiOwners.length > 0,
-      'LazyPetter: no gotchis to pet'
-    );
+    require(gotchiOwners.length > 0, 'LazyPetter: no gotchis to pet');
     for (uint256 i = 0; i < gotchiOwners.length; i++) {
       uint32[] memory gotchis = af.tokenIdsOfOwner(gotchiOwners[i]);
       uint256[] memory gotchiIds = new uint256[](gotchis.length);
@@ -74,5 +111,13 @@ contract LazyPetter is PokeMeReady {
     }
 
     lastExecuted = block.timestamp;
+  }
+
+  function getGotchiOwners()
+    external
+    view
+    returns (address[] memory gotchiOwners)
+  {
+    return gotchiOwners;
   }
 }
