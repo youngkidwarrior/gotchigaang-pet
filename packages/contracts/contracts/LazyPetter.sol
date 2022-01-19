@@ -42,6 +42,7 @@ interface Moloch {
 contract LazyPetter is PokeMeReady {
   uint256 public lastExecuted;
   address[] private gotchiOwners;
+  uint32[] private gotchiTokenIds;
   AavegotchiFacet private af;
   AavegotchiGameFacet private agf;
   Moloch private moloch;
@@ -70,12 +71,15 @@ contract LazyPetter is PokeMeReady {
     _;
   }
 
-  function addGotchiOwners(address[] memory _gotchiOwners) external onlyGaang {
+  function addGotchiOwners(address[] memory _gotchiOwners) external {
     for (uint256 i = 0; i < _gotchiOwners.length; i++) {
-      uint32[] memory gotchis = af.tokenIdsOfOwner(gotchiOwners[i]);
+      uint32[] memory gotchis = af.tokenIdsOfOwner(_gotchiOwners[i]);
       require(gotchis.length > 0, 'Addresses must have at least one gotchi');
       af.setPetOperatorForAll(address(this), true);
       gotchiOwners.push(_gotchiOwners[i]);
+      for (uint256 j = 0; j < gotchis.length; j++) {
+        gotchiTokenIds.push(gotchis[j]);
+      }
     }
     emit AddGotchiOwners(_gotchiOwners);
   }
@@ -84,11 +88,19 @@ contract LazyPetter is PokeMeReady {
     external
     onlyGaang
   {
+    require(
+      gotchiOwners.length > _gotchiOwners.length,
+      'Not enough gotchi owners to remove'
+    );
     for (uint256 i = 0; i < _gotchiOwners.length; i++) {
       for (uint256 j = 0; j < gotchiOwners.length; j++) {
         if (gotchiOwners[j] == _gotchiOwners[i]) {
           af.setPetOperatorForAll(address(this), false);
           delete gotchiOwners[j];
+          uint32[] memory gotchis = af.tokenIdsOfOwner(_gotchiOwners[i]);
+          for (uint256 k = 0; k < gotchis.length; j++) {
+            delete gotchiTokenIds[gotchis[k]];
+          }
         }
       }
     }
@@ -119,5 +131,9 @@ contract LazyPetter is PokeMeReady {
     returns (address[] memory gotchiOwners)
   {
     return gotchiOwners;
+  }
+
+  function getGotchis() external view returns (uint32[] memory gotchiIds) {
+    return gotchiTokenIds;
   }
 }
