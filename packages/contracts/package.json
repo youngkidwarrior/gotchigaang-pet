@@ -9,7 +9,7 @@
     "solhint": "solhint 'contracts/**/*.sol'",
     "chain": "hardhat node",
     "compile": "hardhat compile",
-    "deploy": "hardhat deploy",
+    "deploy": "hardhat deploy --network polygon",
     "deploy-local": "hardhat deploy --network localhost",
     "fork": "hardhat node --fork https://polygon-rpc.com"
   },
@@ -39,6 +39,7 @@
   "dependencies": {
     "@ethersproject/experimental": "^5.4.0",
     "@ethersproject/hardware-wallets": "https://github.com/mudgen/ethers-ledger.git",
+    "@nomiclabs/hardhat-etherscan": "^3.0.0",
     "@openzeppelin/contracts": "^4.4.2",
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0",

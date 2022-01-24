@@ -3,7 +3,6 @@ import Image from 'next/image';
 import useWeb3Modal from '/hooks/useWeb3Modal';
 
 export const OnlyGaang = ({ children, gaangMembers, address }) => {
-  console.log('gaangMembers: ', gaangMembers);
   const { connect } = useWeb3Modal();
 
   const goToDao = () => {
@@ -13,8 +12,7 @@ export const OnlyGaang = ({ children, gaangMembers, address }) => {
 
   return (
     <div>
-      {(gaangMembers && address && gaangMembers.includes(address)) ||
-      address == '0xf4bb53eFcFd49Fe036FdCc8F46D981203ae3BAB8' ? (
+      {gaangMembers && address && gaangMembers.includes(address) ? (
         children
       ) : (
         <div className="flex flex-col justify-center items-center">

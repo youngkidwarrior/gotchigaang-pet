@@ -55,7 +55,6 @@ function reducer(state, action) {
   }
 }
 
-
 const useWeb3Modal = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { provider, web3Provider, address, chainId } = state;
@@ -97,8 +96,6 @@ const useWeb3Modal = () => {
     [provider]
   );
 
-
-
   // A `provider` should come with EIP-1193 events. We'll listen for those events
   // here so that when a user switches accounts or networks, we can update the
   // local React state with that new information.
@@ -127,6 +124,7 @@ const useWeb3Modal = () => {
       provider.on('accountsChanged', handleAccountsChanged);
       provider.on('chainChanged', handleChainChanged);
       provider.on('disconnect', handleDisconnect);
+      provider.on('block', () => console.log('hello'));
 
       // Subscription Cleanup
       return () => {
@@ -139,6 +137,6 @@ const useWeb3Modal = () => {
     }
   }, [provider, disconnect]);
 
-  return { web3Modal, connect, disconnect, web3Provider, address}
-}
+  return { web3Modal, connect, disconnect, web3Provider, address };
+};
 export default useWeb3Modal;

@@ -30,9 +30,14 @@ export default {
     localhost: {
       url: 'http://localhost:8545',
     },
+    polygon: {
+      url: ' https://polygon-rpc.com',
+      gas: 'auto',
+      accounts: [process.env.PK],
+    },
   },
-  namedAccounts:{
-    deployer: 0
+  namedAccounts: {
+    deployer: 0,
   },
   gasReporter: {
     currency: 'USD',

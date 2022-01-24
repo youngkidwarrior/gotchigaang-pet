@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import useWeb3Modal from '/hooks/useWeb3Modal';
-import { formatAddress } from '/utils/web3';
+import { formatAddress } from '/utils';
 
 export const Header = ({ address }) => {
   const { connect } = useWeb3Modal();

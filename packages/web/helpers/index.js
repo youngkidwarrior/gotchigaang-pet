@@ -13,13 +13,18 @@ export const getGotchiOwners = (contract) => {
 
 export const addGotchiOwner = (contract, address) => {
   return new Promise((resolve, reject) => {
-    const added = contract.addGotchiOwners([address]);
-    added
-      .then((a) => {
-        resolve(a);
+    contract
+      .addGotchiOwner(address)
+      .then((tx) => {
+        tx.wait().then((receipt) => {
+          if (receipt.status) resolve(receipt);
+          else reject(receipt);
+        });
       })
       .catch((err) => {
         reject(err);
       });
   });
 };
+
+
