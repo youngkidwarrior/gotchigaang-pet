@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/LazyPetterResolver.sol": {
+      "content": "// SPDX-License-Identifier: UNLICENSED\npragma solidity 0.8.0;\n\ninterface IPetGotchi {\n  function lastExecuted() external view returns (uint256);\n  function petGotchis() external;\n}\n\ncontract LazyPetterResolver {\n    address public immutable pet;\n\n    constructor(address _pet) {\n        pet = _pet;\n    }\n\n    function checker()\n        external\n        view\n        returns (bool canExec, bytes memory execPayload)\n    {\n        uint256 lastExecuted = IPetGotchi(pet).lastExecuted();\n\n        canExec = (block.timestamp - lastExecuted) > 43200;\n\n        execPayload = abi.encodeWithSelector(\n            IPetGotchi.petGotchis.selector\n        );\n    }\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
